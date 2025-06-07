@@ -12,20 +12,39 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login } = useAuth()
+  
+  const { login, API_BASE } = useAuth()
+  
+  // Log API base to help with debugging
+  console.log('LoginPage - API Base URL:', API_BASE)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
-    setLoading(true)
-
-    const result = await login(username, password)
+    console.log('Login form submitted')
     
-    if (!result.success) {
-      setError(result.error)
+    // Form validation
+    if (!username || !password) {
+      setError('Username and password are required')
+      return
     }
     
-    setLoading(false)
+    setError('')
+    setLoading(true)
+    
+    try {
+      console.log('Attempting login with:', username)
+      const result = await login(username, password)
+      console.log('Login result:', result)
+      
+      if (!result.success) {
+        setError(result.error || 'Login failed. Please try again.')
+      }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('An unexpected error occurred. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -61,7 +80,6 @@ export function LoginPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              
               <div className="space-y-2">
                 <label htmlFor="username" className="text-sm font-medium text-foreground">
                   Username or Email
@@ -76,7 +94,6 @@ export function LoginPage() {
                   className="h-11"
                 />
               </div>
-              
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm font-medium text-foreground">
                   Password
@@ -106,9 +123,8 @@ export function LoginPage() {
                   </Button>
                 </div>
               </div>
-
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full h-11 text-base font-medium"
                 disabled={loading}
               >
