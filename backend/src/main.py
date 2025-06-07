@@ -25,11 +25,17 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'asdf#FGSgvasgf$5$WGT')
 frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:5173')
 
 # Enable CORS for all routes with environment-based origins
-CORS(app, 
+CORS(app,
      supports_credentials=True,
-     origins=['http://localhost:5173', 'http://localhost:3000', 'https://*.vercel.app'],
+     origins=[
+         'http://localhost:5173', 
+         'http://localhost:3000', 
+         frontend_url,
+         'https://leadlift-ai.vercel.app',
+         'https://*.vercel.app'
+     ],
      allow_headers=['Content-Type', 'Authorization'],
-     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'] )
 
 # Register blueprints
 app.register_blueprint(auth_bp, url_prefix='/api')
