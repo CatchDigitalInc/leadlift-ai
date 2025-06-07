@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-from src.models.user import db, User
+from models.user import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import re
