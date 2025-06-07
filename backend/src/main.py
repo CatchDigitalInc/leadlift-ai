@@ -35,14 +35,7 @@ CORS(app,
          'https://*.vercel.app'
      ],
      allow_headers=['Content-Type', 'Authorization'],
-     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'] )
-
-# Register blueprints
-app.register_blueprint(auth_bp, url_prefix='/api')
-app.register_blueprint(users_bp, url_prefix='/api')
-app.register_blueprint(clients_bp, url_prefix='/api')
-app.register_blueprint(forms_bp, url_prefix='/api')
-app.register_blueprint(submissions_bp, url_prefix='/api')
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 
 # Database configuration - using SQLite for development
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lead_tracking.db'
@@ -54,7 +47,6 @@ with app.app_context():
     db.create_all()
     
     # Create default admin user if none exists
-    from models.user import User
     from werkzeug.security import generate_password_hash
     
     admin_user = User.query.filter_by(role='admin').first()
@@ -72,12 +64,23 @@ with app.app_context():
         db.session.commit()
         print("Created default admin user: admin / admin123")
 
+# Register blueprints AFTER database initialization
+app.register_blueprint(auth_bp, url_prefix='/api/auth')
+app.register_blueprint(users_bp, url_prefix='/api/users')
+app.register_blueprint(clients_bp, url_prefix='/api/clients')
+app.register_blueprint(forms_bp, url_prefix='/api/forms')
+app.register_blueprint(submissions_bp, url_prefix='/api/submissions')
+
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    return {'status': 'healthy', 'message': 'LeadLift.ai API is running'}
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
     static_folder_path = app.static_folder
     if static_folder_path is None:
-            return "Static folder not configured", 404
+        return "Static folder not configured", 404
 
     if path != "" and os.path.exists(os.path.join(static_folder_path, path)):
         return send_from_directory(static_folder_path, path)
@@ -88,10 +91,6 @@ def serve(path):
         else:
             return "index.html not found", 404
 
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    return {'status': 'healthy', 'message': 'LeadLift.ai API is running'}
-
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port, debug=False)
