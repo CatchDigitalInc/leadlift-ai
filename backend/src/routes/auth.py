@@ -23,7 +23,7 @@ def validate_password(password):
         return False, "Password must contain at least one number"
     return True, "Password is valid"
 
-@auth_bp.route('/auth/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     """User login"""
     try:
@@ -60,7 +60,7 @@ def login():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@auth_bp.route('/auth/logout', methods=['POST'])
+@auth_bp.route('/logout', methods=['POST'])
 def logout():
     """User logout"""
     try:
@@ -72,7 +72,7 @@ def logout():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@auth_bp.route('/auth/me', methods=['GET'])
+@auth_bp.route('/me', methods=['GET'])
 def get_current_user():
     """Get current logged-in user"""
     try:
@@ -92,7 +92,7 @@ def get_current_user():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@auth_bp.route('/auth/change-password', methods=['POST'])
+@auth_bp.route('/change-password', methods=['POST'])
 def change_password():
     """Change user password"""
     try:
