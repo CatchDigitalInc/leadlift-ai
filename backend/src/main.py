@@ -48,7 +48,7 @@ with app.app_context():
     db.create_all()
     
     # Create default admin user if none exists
-    from src.models.user import User
+    from models.user import User
     from werkzeug.security import generate_password_hash
     
     admin_user = User.query.filter_by(role='admin').first()
