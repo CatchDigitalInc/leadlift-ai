@@ -3,7 +3,7 @@ import sys
 # DON'T CHANGE THIS PATH
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from models.user import db, User, Client, Form, Submission
